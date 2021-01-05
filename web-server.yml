@@ -1,0 +1,40 @@
+- hosts: webserver
+  tasks:
+  - file:
+         path: "/dvd"
+         state: directory
+  - mount:
+         path: "/dvd"
+         src: "/dev/cdrom"
+         state: mounted
+         fstype: "iso9660"
+  - yum_repository:
+         name: "dvd1"
+         baseurl: "/dvd/AppStream"
+         gpgcheck: no
+         description: "Softwares from AppStream"
+         
+  - yum_repository:
+         name: "dvd2"
+         baseurl: "/dvd/BaseOS"
+         gpgcheck: no
+         description: "Softwares from BaseOS"
+  - package:
+          name: "httpd"
+          state: present
+  - copy:
+          src: "/index.html"
+          dest: "/var/www/html"
+    notify:
+          - Restart Httpd
+  handlers:
+  - name: Restart Httpd
+    service:
+          name: "httpd"
+          state: started 
+       
+       
+       
+
+
+
